@@ -24,17 +24,18 @@
     gnumake
     dive
     direnv
+    
     exercism
     polychromatic
     htop
     pfetch
-    (python39.withPackages(ps: with ps; [
-      python-lsp-server
-      pylsp-mypy
-      python-lsp-black
-      conda
-      poetry debugpy
-    ]))
+    # (python39.withPackages(ps: with ps; [
+    #   python-lsp-server
+    #   pylsp-mypy
+    #   python-lsp-black
+    #   conda
+    #   poetry debugpy
+    # ]))
   ];
   
   home.sessionVariables = {
@@ -43,6 +44,9 @@
 
   programs.fish = {
     enable = true;
+    shellInit = ''
+    eval (direnv hook fish)
+    '';
   };
   
   programs.git = {
