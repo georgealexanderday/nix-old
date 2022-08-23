@@ -9,7 +9,7 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelParams = ["nvidia-drm.modeset=1" "pci=noaer" "pcie_aspm=off"];
+  boot.kernelParams = ["nvidia-drm.modeset=1" "pci=noaer" "pcie_aspm=off" "intel_iommu=on"];
   boot.extraModulePackages = with config.boot.kernelPackages; [
     rtl88x2bu
   ];
@@ -32,7 +32,6 @@
   # NVIDIA drivers are unfree.
   nixpkgs.config.allowUnfree = true;
 
-  services.xserver.videoDrivers = [ "nvidia" ];
   
   systemd.services.nvidia-control-devices = {
       wantedBy = [ "multi-user.target" ];
@@ -48,14 +47,23 @@
    
     # Enable the X11 windowing system.
   services.xserver.enable = true;
+  services.xserver.videoDrivers = [ "nvidia" ];
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
    
   # Enable sound.
-  sound.enable = true;
-  hardware.pulseaudio.enable = true;
-  
+  #sound.enable = true;
+  hardware.pulseaudio.enable = false;
+
+  services.pipewire = {
+      enable = true;
+      alsa = {
+        enable = true;
+        support32Bit = true;
+      };
+      pulse.enable = true;
+    };  
   
   # Keeb
   hardware.keyboard.zsa.enable = true;
@@ -66,7 +74,7 @@
   users.users.g = {
     isNormalUser = true;
     shell = pkgs.fish;
-    extraGroups = [ "wheel" "networkmanager" "plugdev" "docker"]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" "plugdev" "docker" "libvirtd"]; # Enable ‘sudo’ for the user.
   };
 
   # List packages installed in system profile. To search, run:
@@ -79,9 +87,9 @@
     gnome.gnome-tweaks
     gnumake
     gcc
-    cudatoolkit    
     pciutils
     file
+    virt-manager
   ];
 
   programs.fish.enable = true;
@@ -109,6 +117,10 @@
   fonts.fonts = with pkgs; [
     (nerdfonts.override { fonts = [ "FiraCode" ]; })
   ];
+  
+  
+  virtualisation.libvirtd.enable = true;
+
 
   # List services that you want to enable:
 

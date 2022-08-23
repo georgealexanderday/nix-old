@@ -9,6 +9,7 @@
   home.packages = with pkgs; [
     wally-cli
     google-chrome
+    rustup
     rnix-lsp
     vscode
     fzf
@@ -20,15 +21,16 @@
     elixir_ls
     inotify-tools
     tmux
-    neovim
+    discord
+    unzip
     gnumake
     dive
-    direnv
-    
     exercism
     polychromatic
     htop
     pfetch
+    wezterm
+    lutris
     # (python39.withPackages(ps: with ps; [
     #   python-lsp-server
     #   pylsp-mypy
@@ -45,10 +47,20 @@
   programs.fish = {
     enable = true;
     shellInit = ''
-    eval (direnv hook fish)
+      fish_vi_key_bindings
     '';
   };
   
+  programs.neovim = {
+    enable = true;
+  };
+  
+  
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };  
+
   programs.git = {
     enable = true;
     userName = "georgealexanderday";
@@ -64,6 +76,7 @@
   
   programs.starship = {
     enable = true;
+    enableFishIntegration = true;
     settings = {
       add_newline = true;        
     };
